@@ -61,6 +61,7 @@ const defaultOptions: Options = {
     arrowParens: "avoid",
     printWidth: 80,
   },
+  keepHistory: false,
   inlineUtilityTypes: false,
 };
 

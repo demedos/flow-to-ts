@@ -7,7 +7,11 @@ import { convert } from "./convert";
 import { detectJsx } from "./detect-jsx";
 import { version } from "../package.json";
 
-export const cli = (argv) => {
+import simpleGit, { SimpleGit } from "simple-git";
+
+const git: SimpleGit = simpleGit();
+
+export const cli = async (argv) => {
   const program = new Command();
   program
     .version(version)
@@ -47,8 +51,9 @@ export const cli = (argv) => {
       "avoid"
     )
     .option("--print-width [width]", "line width (depends on --prettier)", 80)
-    .option("--write", "write output to disk instead of STDOUT")
-    .option("--delete-source", "delete the source file");
+    .option("--write", "write output to disk")
+    .option("--delete-source", "delete the source file")
+    .option("--keep-history", "preserve git history");
 
   program.parse(argv);
 
@@ -69,6 +74,7 @@ export const cli = (argv) => {
       arrowParens: program.arrowParens,
       printWidth: parseInt(program.printWidth),
     },
+    keepHistory: Boolean(program.keepHistory),
   };
 
   if (options.prettier) {
@@ -98,13 +104,15 @@ export const cli = (argv) => {
 
     try {
       const outCode = convert(inCode, options);
+      const extension = detectJsx(inCode) ? ".tsx" : ".ts";
+      const outFile = file.replace(/\.jsx?$/, extension);
+
+      if (options.keepHistory) {
+        await git.mv(inFile, outFile);
+      }
 
       if (program.write) {
-        const extension = detectJsx(inCode) ? ".tsx" : ".ts";
-        const outFile = file.replace(/\.jsx?$/, extension);
         fs.writeFileSync(outFile, outCode);
-      } else {
-        console.log(outCode);
       }
 
       if (program.deleteSource) {

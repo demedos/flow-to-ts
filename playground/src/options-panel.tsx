@@ -28,6 +28,7 @@ export type Options = {
     arrowParens: "avoid" | "always";
     printWidth: number;
   };
+  keepHistory: boolean;
   inlineUtilityTypes: boolean;
 };
 
@@ -246,6 +247,19 @@ class OptionsPanel extends React.Component<Props> {
               onOptionsChange({
                 ...options,
                 inlineUtilityTypes: e.currentTarget.checked,
+              });
+            }}
+          />
+          <div style={{ height: 8, gridColumn: "1 / span 2" }} />
+          <label htmlFor="keep-history">keep history</label>
+          <input
+            id="keep-history"
+            type="checkbox"
+            checked={options.keepHistory}
+            onChange={(e) => {
+              onOptionsChange({
+                ...options,
+                keepHistory: e.currentTarget.checked,
               });
             }}
           />

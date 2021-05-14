@@ -54,6 +54,11 @@ export const maybeDecodeHash = (
         parseInt(urlParams.inlineUtilityTypes)
       );
     }
+    if (urlParams.keepHistory) {
+      options.keepHistory = Boolean(
+        parseInt(urlParams.keepHistory)
+      )
+    }
 
     const code = atob(urlParams.code);
 
